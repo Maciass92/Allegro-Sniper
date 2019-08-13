@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+    app:
+      build:
+        context: ./
+        dockerfile: docker/application/Dockerfile.app
+      image: allegro_sniper
+      container_name: allegro-sniper
+      ports:
+        - "8080:8080"
