@@ -1,5 +1,8 @@
 package com.maciejkomorowski.allegro.sniper.services;
 
+import java.util.Map;
+
 public interface AuctionService {
-    void runSingleScan();
+    String getAuctions(String accessToken, Map<String, String> queryParams);
+    String getCategories(String accessToken);
 }

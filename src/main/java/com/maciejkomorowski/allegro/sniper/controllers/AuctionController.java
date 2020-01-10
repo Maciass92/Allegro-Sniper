@@ -2,26 +2,35 @@ package com.maciejkomorowski.allegro.sniper.controllers;
 
 import com.maciejkomorowski.allegro.sniper.services.AuctionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.maciejkomorowski.allegro.sniper.services.enums.AllegroQueryParams.PHRASE;
+import static com.maciejkomorowski.allegro.sniper.utils.builders.RequestBuilder.HEADER_AUTHORIZATION;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auctions")
+@RequestMapping("/allegro/auctions")
 public class AuctionController {
 
     private final AuctionService auctionService;
 
-    @RequestMapping()
-    public String getAuctions(){
+    @GetMapping
+    public String getAuctions(@RequestParam String phrase, @RequestHeader(name=HEADER_AUTHORIZATION) String accessToken){
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put(PHRASE.getName(), phrase);
 
-        return "Hello world";
+        return auctionService.getAuctions(accessToken, queryParams);
     }
 
-    @RequestMapping("/scan")
-    public String scan(){
-        auctionService.runSingleScan();
-
-        return "Scanned";
+    @GetMapping("/category/all")
+    public String getCategories(@RequestHeader(name=HEADER_AUTHORIZATION) String accessToken){
+        return auctionService.getCategories(accessToken);
     }
 }

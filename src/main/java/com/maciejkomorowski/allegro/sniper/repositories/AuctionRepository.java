@@ -1,6 +1,6 @@
 package com.maciejkomorowski.allegro.sniper.repositories;
 
-import com.maciejkomorowski.allegro.sniper.models.AuctionModel;
+import com.maciejkomorowski.allegro.sniper.repositories.models.AuctionModel;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
