@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import static com.maciejkomorowski.allegro.sniper.services.enums.AllegroQueryParams.PHRASE;
 import static org.junit.Assert.assertEquals;
@@ -44,8 +43,8 @@ public class UrlBuilderTest {
     public void properUrlWithParams(){
         //given
         String appendUrl = "/isWorking";
-        Map<String, String> params = new HashMap<>();
-        params.put(PHRASE.getName(), "test");
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add(PHRASE.getName(), "test");
 
         //when
         String url = urlBuilder.buildApiUrl(appendUrl, params);

@@ -1,42 +1,42 @@
 package com.maciejkomorowski.allegro.sniper.services.impl;
 
-import com.maciejkomorowski.allegro.sniper.utils.builders.RequestBuilder;
-import com.maciejkomorowski.allegro.sniper.utils.builders.UrlBuilder;
+import com.maciejkomorowski.allegro.sniper.repositories.AuctionRepository;
+import com.maciejkomorowski.allegro.sniper.repositories.models.AuctionModel;
 import com.maciejkomorowski.allegro.sniper.services.AuctionService;
+import com.maciejkomorowski.allegro.sniper.services.dto.GetAuctionsResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.util.MultiValueMap;
 
-import java.util.Map;
+import java.util.List;
 
-import static com.maciejkomorowski.allegro.sniper.services.enums.AllegroUrl.OFFERS_LISTING;
 import static com.maciejkomorowski.allegro.sniper.services.enums.AllegroUrl.SALE_CATEGORIES;
+import static com.maciejkomorowski.allegro.sniper.utils.transformers.AuctionEntityTransformer.transformToAuctionModelList;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 @RequiredArgsConstructor
 public class AllegroAuctionServiceImpl implements AuctionService {
 
-    private final RequestBuilder requestBuilder;
-    private final UrlBuilder urlBuilder;
+    private final AllegroApiService allegroApiService;
+    private final AuctionRepository auctionRepository;
 
     @Override
-    public String getAuctions(String accessToken, Map<String, String> queryParams) {
-        String endpoint = urlBuilder.buildApiUrl(OFFERS_LISTING.getName(), queryParams);
-        HttpEntity<String> request = requestBuilder.buildRequest(accessToken);
-        ResponseEntity<String> result = new RestTemplate().exchange(endpoint, HttpMethod.GET, request, String.class);
+    public GetAuctionsResponse getAuctions(String accessToken, MultiValueMap<String, String> queryParams, boolean shouldSaveItems) {
+        GetAuctionsResponse response = allegroApiService.getAuctions(accessToken, queryParams);
 
-        return result.getBody();
+        if (shouldSaveItems && nonNull(response) && !isEmpty(response.getAuctions())){
+            List<AuctionModel> auctionModels = transformToAuctionModelList(response.getAuctions());
+            //todo auction filtering
+            auctionRepository.saveAll(auctionModels);
+        }
+
+        return response;
     }
 
     @Override
     public String getCategories(String accessToken) {
-        String endpoint = urlBuilder.buildApiUrl(SALE_CATEGORIES.getName(), null);
-        HttpEntity<String> request = requestBuilder.buildRequest(accessToken);
-        ResponseEntity<String> result = new RestTemplate().exchange(endpoint, HttpMethod.GET, request, String.class);
-
-        return result.getBody();
+        return allegroApiService.getRawResponse(accessToken, SALE_CATEGORIES.getAppendix());
     }
 }

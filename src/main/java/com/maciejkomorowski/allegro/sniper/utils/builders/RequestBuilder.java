@@ -11,14 +11,10 @@ public class RequestBuilder {
     @Value("${allegro.request.header.accept}")
     private String allegroHeaderAccept;
 
-    public static final String HEADER_ACCEPT = "Accept";
-    public static final String HEADER_AUTHORIZATION = "Authorization";
-    public static final String HEADER_AUTHORIZATION_BEARER = "Bearer ";
-
     public HttpEntity<String> buildRequest(String accessToken){
         HttpHeaders header = new HttpHeaders();
-        header.add(HEADER_AUTHORIZATION, HEADER_AUTHORIZATION_BEARER + accessToken);
-        header.add(HEADER_ACCEPT, allegroHeaderAccept);
+        header.add(HttpHeaders.ACCEPT, allegroHeaderAccept);
+        header.setBearerAuth(accessToken);
 
         return new HttpEntity<>(header);
     }

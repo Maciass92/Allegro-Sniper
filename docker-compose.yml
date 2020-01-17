@@ -9,3 +9,16 @@ services:
       ports:
         - "8080:8080"
         - "6000:6000"
+    db:
+      build:
+        context: ./
+        dockerfile: docker/database/Dockerfile.app
+      image: allegro_db
+      container_name: allegro-db
+      ports:
+        - "7000:7000"
+        - "3306:3306"
+      volumes:
+        - my-db:/var/lib/mysql
+volumes:
+  my-db:

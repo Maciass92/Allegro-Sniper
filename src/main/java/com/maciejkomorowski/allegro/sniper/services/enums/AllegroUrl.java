@@ -9,5 +9,5 @@ public enum AllegroUrl{
     OFFERS_LISTING ("/offers/listing"),
     SALE_CATEGORIES ("/sale/categories");
 
-    private final String name;
+    private final String appendix;
 }
